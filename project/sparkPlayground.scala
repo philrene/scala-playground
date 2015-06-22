@@ -6,6 +6,8 @@ object scalaPlayground extends Build {
   import sbtassembly.Plugin._
   import AssemblyKeys._
 
+  lazy val releaseVersionBump = sbtrelease.Version.Bump.Major
+
   lazy val sbtAssemblySettings = assemblySettings ++ Seq(
 
     // Skip tests
