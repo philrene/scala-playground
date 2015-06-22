@@ -59,11 +59,11 @@ object scalaPlayground extends Build {
   lazy val forceNextReleaseVersion = scala.util.Properties.propOrNull("snapshot.version")
 
   lazy val releaseSettings = projectSettings ++ Seq[Setting[_]](
-    releaseVersion := { if (forceReleaseVersion != null)
+    releaseVersion := { if (forceReleaseVersion != null && !forceReleaseVersion.isEmpty())
                           ver =>  forceReleaseVersion
                         else
                           ver => Version(ver).map(_.withoutQualifier.string).getOrElse(versionFormatError)},
-    releaseNextVersion := { if (forceNextReleaseVersion != null)
+    releaseNextVersion := { if (forceNextReleaseVersion != null && !forceNextReleaseVersion.isEmpty())
                               ver => forceNextReleaseVersion
                             else
                               ver => Version(ver).map(_.bumpMinor.asSnapshot.string).getOrElse(versionFormatError) }
