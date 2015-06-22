@@ -1,12 +1,15 @@
 import sbt.Keys._
 import sbt._
 
+import sbtrelease._
+import sbtrelease.ReleasePlugin._
+
 object scalaPlayground extends Build {
 
   import sbtassembly.Plugin._
   import AssemblyKeys._
+  import sbtrelease.ReleasePlugin.autoImport._
 
-  lazy val releaseVersionBump = sbtrelease.Version.Bump.Major
 
   lazy val sbtAssemblySettings = assemblySettings ++ Seq(
 
@@ -54,8 +57,12 @@ object scalaPlayground extends Build {
     publishTo := Some(Resolver.file("file",  new File( "/tmp/" )) )
   )
 
-  lazy val buildSettings = basicSettings ++ sbtAssemblySettings
+  lazy val releaseSettings = projectSettings ++ Seq[Setting[_]](
+    releaseVersion := { ver => Version(ver).map(_.withoutQualifier.string).getOrElse(versionFormatError) },
+    releaseNextVersion :=  { ver => Version(ver).map(_.bumpMinor.asSnapshot.string).getOrElse(versionFormatError) }
+  )
 
+  lazy val buildSettings = basicSettings ++ sbtAssemblySettings ++ releaseSettings
 
   // Configure prompt to show current project
   override lazy val settings = super.settings :+ {
