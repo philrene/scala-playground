@@ -48,7 +48,8 @@ object scalaPlayground extends Build {
     scalaVersion := "2.10.5",
     scalacOptions := Seq("-deprecation", "-encoding", "utf8"),
     parallelExecution := false,
-    javaOptions += "-Xmx4G"
+    javaOptions += "-Xmx4G",
+    publishTo := Some(Resolver.file("file",  new File( "~/src/opensource/" )) )
   )
 
   lazy val buildSettings = basicSettings ++ sbtAssemblySettings
