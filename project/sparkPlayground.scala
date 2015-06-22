@@ -1,6 +1,5 @@
 import sbt.Keys._
 import sbt._
-
 import sbtrelease._
 
 object scalaPlayground extends Build {
@@ -53,12 +52,18 @@ object scalaPlayground extends Build {
     scalacOptions := Seq("-deprecation", "-encoding", "utf8"),
     parallelExecution := false,
     javaOptions += "-Xmx4G",
-    publishTo := Some(Resolver.file("file",  new File( "/tmp/" )) )
+    publishTo := Some(Resolver.file("file", new File("/tmp/")))
   )
 
+  lazy val forceReleaseVersion = scala.util.Properties.propOrNull("releaseVersion")
+  println(forceReleaseVersion)
+
   lazy val releaseSettings = projectSettings ++ Seq[Setting[_]](
-    releaseVersion := { ver => "1.0.2" },
-    releaseNextVersion :=  { ver => Version(ver).map(_.bumpMinor.asSnapshot.string).getOrElse(versionFormatError) }
+    releaseVersion := { if (forceReleaseVersion != null)
+                          ver =>  forceReleaseVersion
+                        else
+                          ver => Version(ver).map(_.withoutQualifier.string).getOrElse(versionFormatError)},
+    releaseNextVersion := { ver => Version(ver).map(_.bumpMinor.asSnapshot.string).getOrElse(versionFormatError) }
   )
 
   lazy val buildSettings = basicSettings ++ sbtAssemblySettings ++ releaseSettings
