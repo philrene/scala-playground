@@ -2,7 +2,6 @@ import sbt.Keys._
 import sbt._
 
 import sbtrelease._
-import sbtrelease.ReleasePlugin._
 
 object scalaPlayground extends Build {
 
@@ -58,7 +57,7 @@ object scalaPlayground extends Build {
   )
 
   lazy val releaseSettings = projectSettings ++ Seq[Setting[_]](
-    releaseVersion := { ver => Version(ver).map(_.withoutQualifier.string).getOrElse(versionFormatError) },
+    releaseVersion := { ver => "1.0.2" },
     releaseNextVersion :=  { ver => Version(ver).map(_.bumpMinor.asSnapshot.string).getOrElse(versionFormatError) }
   )
 
