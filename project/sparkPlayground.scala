@@ -55,15 +55,18 @@ object scalaPlayground extends Build {
     publishTo := Some(Resolver.file("file", new File("/tmp/")))
   )
 
-  lazy val forceReleaseVersion = scala.util.Properties.propOrNull("releaseVersion")
-  println(forceReleaseVersion)
+  lazy val forceReleaseVersion = scala.util.Properties.propOrNull("release.version")
+  lazy val forceNextReleaseVersion = scala.util.Properties.propOrNull("snapshot.version")
 
   lazy val releaseSettings = projectSettings ++ Seq[Setting[_]](
     releaseVersion := { if (forceReleaseVersion != null)
                           ver =>  forceReleaseVersion
                         else
                           ver => Version(ver).map(_.withoutQualifier.string).getOrElse(versionFormatError)},
-    releaseNextVersion := { ver => Version(ver).map(_.bumpMinor.asSnapshot.string).getOrElse(versionFormatError) }
+    releaseNextVersion := { if (forceNextReleaseVersion != null)
+                              ver => forceNextReleaseVersion
+                            else
+                              ver => Version(ver).map(_.bumpMinor.asSnapshot.string).getOrElse(versionFormatError) }
   )
 
   lazy val buildSettings = basicSettings ++ sbtAssemblySettings ++ releaseSettings
